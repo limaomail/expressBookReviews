@@ -22,7 +22,13 @@ public_users.post("/register", (req,res) => {
 
 // Task 1
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books,null,4));
+    getAllBooks()
+    .then((result) => {
+        res.send(JSON.stringify(result, null, 4));
+    })
+    .catch((Error) => {
+        res.status(500).send("Internal Server Error.")
+    })
 });
 
 // Task 2
@@ -70,6 +76,20 @@ public_users.get('/review/:isbn',function (req, res) {
 });
 
 // Promises
+
+// Task 10
+const getAllBooks = () => {
+    return new Promise((resolve, reject) => {
+        if (books)
+        {
+            resolve(books);
+        }
+        else
+        {
+            reject(new Error("Could not find books."))
+        }
+    });
+};
 
 // Task 11
 const getBookByISBN = (isnb) => {
