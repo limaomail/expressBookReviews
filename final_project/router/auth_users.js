@@ -27,7 +27,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
       }
 }
 
-//only registered users can login
+// Task 7
 regd_users.post("/login", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -50,23 +50,30 @@ regd_users.post("/login", (req,res) => {
     }
 });
 
-// Add a book review
+// Task 8
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  const username = req.session.username;
+    const username = req.session.authorization.username;
     const isbn = req.params.isbn;
-  let book = books[isbn];
-  let obj = {};
-  obj.user = username;
-  if (book)
-  {
-      let reviews = req.body.reviews;
+    const review = req.query.review;
+    if (books[isbn])
+    {
+        books[isbn]["reviews"][username] = review;
 
-      if (reviews)
-      {
-          obj.review = review;
-          book["reviews"] = review;
-      }
-  }
+        return res.status(200).send("Review created/updated for the book with ISBN: " + isbn + ".");
+    }
+});
+
+// Task 9
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const username = req.session.authorization.username;
+    const isbn = req.params.isbn;
+
+    if (books[isbn])
+    {
+        delete books[isbn]["reviews"][username];
+
+        return res.status(200).send("Review by user " + username + " deleted for the book with ISBN: " + isbn + ".");
+    }
 });
 
 module.exports.authenticated = regd_users;
